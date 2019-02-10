@@ -1,0 +1,751 @@
+---
+- block:
+  - include_vars: '{{ item }}'
+    with_first_found:
+    - '{{ ansible_distribution.lower() }}.yml'
+    - '{{ ansible_os_family.lower() }}.yml'
+    - '{{ ansible_system.lower() }}.yml'
+    - 'default.yml'
+
+  - block:
+    - name: 'keyring directory'
+      file:
+        state: 'directory'
+        path:  '/etc/apt/additional.gpg.d'
+        owner: '{{ powerdns.root_owner }}'
+        group: '{{ powerdns.root_group }}'
+        mode:  '0755'
+
+    - name: 'download keyring - master repository'
+      get_url:
+        url:      'https://repo.powerdns.com/CBC8B383-pub.asc'
+        checksum: 'md5:8ae5872367e05a4e61c5ceb6f24c90ca'
+        dest:     '/etc/apt/additional.gpg.d/powerdns-master.gpg'
+        mode:     '0444'
+      environment: '{{ proxy_environment | default({}) }}'
+
+    - name: 'download keyring - master repository'
+      get_url:
+        url:      'https://repo.powerdns.com/FD380FBB-pub.asc'
+        checksum: 'md5:21b77b0b4d7b8f3b6496824d71ccd993'
+        dest:     '/etc/apt/additional.gpg.d/powerdns-release.gpg'
+        mode:     '0444'
+      environment: '{{ proxy_environment | default({}) }}'
+
+    - name: 'additional keyring - master repository'
+      apt_key:
+        file: '/etc/apt/additional.gpg.d/powerdns-master.gpg'
+        id:   'D47975F8DAE32700A563E64FFF389421CBC8B383'
+
+    - name: 'additional keyring - release repository'
+      apt_key:
+        file: '/etc/apt/additional.gpg.d/powerdns-release.gpg'
+        id:   '9FAAA5577E8FCF62093D036C1B0C6205FD380FBB'
+
+    - name: 'additional repository'
+      template:
+        src:   'apt.list.j2'
+        dest:  '/etc/apt/sources.list.d/powerdns.list'
+        owner: '{{ powerdns.root_owner }}'
+        group: '{{ powerdns.root_group }}'
+        mode:  '0444'
+      register: apt_repo
+
+    - name: 'repository update'
+      apt: update_cache=yes
+      when: apt_repo.changed
+
+    - name: 'set local address'
+      debconf:
+        name:     'pdns-server'
+        question: 'pdns-server/localaddress'
+        value:    '127.0.0.1:5553'
+        vtype:    'string'
+      when:
+      - 'powerdns.active.authoritative'
+
+    # block
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: 'installed package'
+    package:
+      name:  '{{ powerdns.package[item] }}'
+      state: 'present'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  - name: 'config directory'
+    file:
+      state: 'directory'
+      path:  '{{ powerdns.config_dir[item] }}'
+      owner: '{{ powerdns.root_owner }}'
+      group: '{{ powerdns.root_group }}'
+      mode:  '0755'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  - name: 'include directory'
+    file:
+      state: 'directory'
+      path:  '{{ powerdns.include_dir[item] }}'
+      owner: '{{ powerdns.root_owner }}'
+      group: '{{ powerdns.root_group }}'
+      mode:  '0755'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  - name: 'get global config file list'
+    find:
+      paths:     '{{ powerdns.config_dir[item] }}'
+      patterns:  '*.conf'
+      file_type: 'any'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+    register: global_config_file_list
+
+  - name: 'get include config file list'
+    find:
+      paths:     '{{ powerdns.include_dir[item] }}'
+      patterns:  '*.conf'
+      file_type: 'any'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+    register: include_config_file_list
+
+  - name: 'cleanup global config file'
+    file:
+      state: 'absent'
+      path:  '{{ item.1.path }}'
+    notify:
+    - 'restarted service : powerdns : {{ item.0.item }}'
+    when:
+    - 'item.1.path|basename not in [powerdns.config_file.authoritative, powerdns.config_file.recursor, powerdns.config_file.dnsdist]'
+    loop_control:
+      label: '{{ item.1.path }}'
+    with_subelements:
+    - '{{ global_config_file_list.results }}'
+    - 'files'
+
+  - name: 'cleanup include config file'
+    file:
+      state: 'absent'
+      path:  '{{ item.1.path }}'
+    notify:
+    - 'restarted service : powerdns : {{ item.0.item }}'
+    when: (
+            (powerdns.include is undefined) or
+            (powerdns.include[item.0.item] is undefined) or
+            (powerdns.include[item.0.item] is not mapping) or
+            (item.1.path|basename|regex_replace('\.conf$','') not in powerdns.include[item.0.item].keys())
+          ) and (
+            (powerdns.config.backend is undefined) or
+            (powerdns.config.backend is not mapping) or
+            (item.1.path|basename|regex_replace('\.conf$','') not in powerdns.config.backend.keys())
+          )
+    loop_control:
+      label: '{{ item.1.path }}'
+    with_subelements:
+    - '{{ include_config_file_list.results }}'
+    - 'files'
+
+  - name: 'configured service'
+    template:
+      src:   '{{ item }}.conf.j2'
+      dest:  '{{ powerdns.config_dir[item] }}/{{ powerdns.config_file[item] }}'
+      owner: '{{ powerdns.root_owner }}'
+      group: '{{ powerdns.root_group }}'
+      mode:  '{% if item == "authoritative" %}0400{% else %}0444{% endif %}'
+    notify:
+    - 'restarted service : powerdns : {{ item }}'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    - 'powerdns.config is defined'
+    - 'powerdns.config[item] is defined'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  - name: 'configured recursor lua script'
+    template:
+      src:   'recursor.lua.j2'
+      dest:  '{{ powerdns.config_dir.recursor }}/recursor.lua'
+      owner: '{{ powerdns.root_owner }}'
+      group: '{{ powerdns.root_group }}'
+      mode:  '0444'
+    when:
+    - 'powerdns.active.recursor is sameas true'
+    - 'powerdns.config is defined'
+    - 'powerdns.config.recursor is defined'
+    - 'powerdns.config.recursor["lua-config-file"] is defined'
+    - 'powerdns.config.recursor["lua-config-file"] == "recursor.lua"'
+
+  #
+  # Backend - MySQL
+  #
+
+  - block:
+    - name: 'installed gmysql package'
+      package:
+        name:  '{{ powerdns.package.backend.gmysql }}'
+        state: 'present'
+
+    - name: 'configured gmysql service'
+      template:
+        src:   'gmysql.conf.j2'
+        dest:  '{{ powerdns.include_dir.authoritative }}/gmysql.conf'
+        owner: '{{ powerdns.root_owner }}'
+        group: '{{ powerdns.root_group }}'
+        mode:  '0400'
+      notify:
+      - 'restarted service : powerdns : authoritative'
+
+    - name: 'created gmysql databases'
+      mysql_db:
+        name: '{{ powerdns.config.backend.gmysql["dbname"] }}'
+      notify:
+      - 'initialized database : powerdns : gmysql'
+      - 'initialized database : powerdns : gmysql : foreign keys'
+
+    - name: 'created gmysql user'
+      mysql_user:
+        name:     '{{ powerdns.config.backend.gmysql["user"] }}'
+        password: '{{ powerdns.config.backend.gmysql["password"] }}'
+        priv:     'pdns.*:ALL'
+        host:     'localhost'
+
+    # block
+    when:
+    - 'powerdns.active.authoritative is sameas true'
+    - 'powerdns.config is defined'
+    - 'powerdns.config.backend is defined'
+    - 'powerdns.config.backend.gmysql is defined'
+
+  #
+  # Handlers
+  #
+
+  - meta: flush_handlers
+
+  #
+  # Service
+  #
+
+  - name: 'enabled service'
+    service:
+      name:    '{{ powerdns.service[item] }}'
+      enabled: 'yes'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  - name: 'started service'
+    service:
+      name:  '{{ powerdns.service[item] }}'
+      state: 'started'
+    when:
+    - 'powerdns.active[item] is sameas true'
+    with_items:
+    - 'authoritative'
+    - 'recursor'
+    - 'dnsdist'
+
+  #
+  # Resolv
+  #
+
+  - name: 'configure resolv.conf'
+    template:
+      src:   'resolv.conf.j2'
+      dest:  '/etc/resolv.conf'
+      owner: '{{ powerdns.root_owner }}'
+      group: '{{ powerdns.root_group }}'
+      mode:  '0444'
+    when:
+    - 'powerdns.active.recursor is sameas true'
+    - 'powerdns.config is defined'
+    - 'powerdns.config.recursor is defined'
+    - 'powerdns.config.recursor["local-address"] is defined'
+    - '"127.0.0.1" in powerdns.config.recursor["local-address"]'
+    - 'powerdns.config.recursor["local-port"] is defined'
+    - '"53" in powerdns.config.recursor["local-port"]'
+
+  #
+  # Flash Handler
+  #
+
+  - meta: flush_handlers
+
+  #
+  # Authoritative
+  #
+  - block:
+
+    #
+    # TSIG
+    #
+
+    - name: 'tsig : exists raw'
+      command: 'pdnsutil list-tsig-keys'
+      register: 'tsig_exists_raw_result'
+      changed_when: False
+
+    - name: 'tsig : exists list'
+      set_fact:
+        tsig_exists_items:
+          name: '{{ item | regex_replace("^(.*)\. (hmac-(?:md5|sha(?:1|224|256|384|512)))\. (.*)$", "\1") }}'
+          algo: '{{ item | regex_replace("^(.*)\. (hmac-(?:md5|sha(?:1|224|256|384|512)))\. (.*)$", "\2") }}'
+          key:  '{{ item | regex_replace("^(.*)\. (hmac-(?:md5|sha(?:1|224|256|384|512)))\. (.*)$", "\3") }}'
+      register: 'tsig_exists_list_result'
+      loop_control:
+        label: '{{ item | regex_replace("^(.*)\. (hmac-(?:md5|sha(?:1|224|256|384|512)))\. (.*)$", "\1") }}'
+      with_items: '{{ tsig_exists_raw_result.stdout_lines }}'
+
+    - name: 'tsig : entry for exists'
+      set_fact:
+        tsig_exists: '{{
+              tsig_exists_list_result.results
+              |selectattr("ansible_facts", "defined")
+              |selectattr("ansible_facts.tsig_exists_items", "defined")
+              |selectattr("ansible_facts.tsig_exists_items.name", "defined")
+              |selectattr("ansible_facts.tsig_exists_items.algo", "defined")
+              |selectattr("ansible_facts.tsig_exists_items.key", "defined")
+              |map(attribute="ansible_facts.tsig_exists_items")
+              |list
+            }}'
+
+    - name: 'tsig : entry for define'
+      set_fact:
+        tsig_define: '{{ powerdns.tsig | default([]) }}'
+
+    - name: 'tsig : entry for generate'
+      set_fact:
+        tsig_generate: '{{
+            (
+              tsig_define
+              | selectattr("key", "equalto", "generate")
+              | map(attribute="name")
+              | list
+            ) | difference(
+              tsig_exists
+              | map(attribute="name")
+              | list
+            )
+          }}'
+
+    - name: 'tsig : entry for import'
+      set_fact:
+        tsig_import: '{{
+            (
+              tsig_define
+              | rejectattr("key", "equalto", "generate")
+            ) | difference(
+              tsig_exists
+            )
+          }}'
+
+    - name: 'tsig : entry for unknown'
+      set_fact:
+        tsig_unknown: '{{ (
+            tsig_exists
+            | map(attribute="name")
+            | list
+            ) | difference(
+            tsig_define
+            | map(attribute="name")
+            | list
+            )
+          }}'
+
+    - name: 'tsig : delete keys'
+      command: 'pdnsutil delete-tsig-key {{ item.name }}'
+      when:
+        (
+          item.name in ( tsig_import | map(attribute="name") | list )
+        ) or (
+          item.name in tsig_unknown
+        )
+      loop_control:
+        label: '{{ item.name }}'
+      with_items: '{{ tsig_exists }}'
+
+    - name: 'tsig : generate keys'
+      command: 'pdnsutil generate-tsig-key {{ item.name }} {{ item.algo }}'
+      when:
+      - 'item.name in tsig_generate'
+      - 'item.key == "generate"'
+      loop_control:
+        label: '{{ item.name }}'
+      with_items: '{{ tsig_define }}'
+
+    - name: 'tsig : import keys'
+      command: 'pdnsutil import-tsig-key {{ item.name }} {{ item.algo }} {{ item.key }}'
+      when:
+      - 'item.name in ( tsig_import | map(attribute="name") | list )'
+      - 'item.key != "generate"'
+      loop_control:
+        label: '{{ item.name }}'
+      with_items: '{{ tsig_define }}'
+
+    #
+    # Zone
+    #
+
+    - name: 'zone : list'
+      command: 'pdnsutil list-all-zones'
+      register: 'list_zone_result'
+      changed_when: 'False'
+
+    - name: 'zone : unknown'
+      fail:
+        msg: 'unknown domain : {{ item }}'
+      when:
+      - 'item.zone is defined'
+      - 'item.zone is mapping'
+      - 'item not in powerdns.zone.keys()'
+      with_items: '{{ list_zone_result.stdout_lines }}'
+
+    - name: 'zone : show'
+      command: 'pdnsutil show-zone {{ item.key }}'
+      register: 'show_zone_result'
+      failed_when: 'show_zone_result.rc not in [0, 1]'
+      changed_when: 'False'
+      when:
+      - 'item.value.record is defined'
+      - 'item.value.record is sequence'
+      - 'item.value.record
+          | selectattr("type", "defined")
+          | selectattr("type", "equalto", "NS")
+          | map(attribute="val") | list | length > 0'
+      loop_control:
+        label: '{{ item.key }}'
+      with_dict: '{{ powerdns.zone | default({}) }}'
+
+    - name: 'zone : create'
+      command: >-
+        pdnsutil
+        create-zone
+        {{ item.item.key }}
+        {{
+          item.item.value.record
+          | selectattr("type", "defined")
+          | selectattr("type", "equalto", "NS")
+          | map(attribute="val") | list | first
+        }}
+      when:
+      - 'item.skipped is undefined or item.skipped is sameas false'
+      - 'item.rc == 1'
+      - 'item.stderr == "No such zone in the database"'
+      loop_control:
+        label: '{{ item.item.key }}'
+      with_items: '{{ show_zone_result.results }}'
+
+    #
+    # META
+    #
+
+    - name: 'meta : get all'
+      command: 'pdnsutil get-meta {{ item.key }}'
+      register: 'meta_all_result'
+      changed_when: False
+      loop_control:
+        label: '{{ item.key }}'
+      with_dict: '{{ powerdns.zone | default({}) }}'
+
+    - name: 'meta : get entry'
+      set_fact:
+        meta:
+          TSIG_ALLOW_AXFR: >-
+            '{{ (item.stdout |
+                  regex_search("^TSIG-ALLOW-AXFR =.*", multiline=True) |
+                  regex_replace(".* = ")).split(",") }}'
+          AXFR_MASTER_TSIG: >-
+            '{{ (item.stdout |
+                  regex_search("^AXFR-MASTER-TSIG =.*", multiline=True) |
+                  regex_replace(".* = ")).split(",") }}'
+          TSIG_ALLOW_DNSUPDATE: >-
+            '{{ (item.stdout |
+                  regex_search("^TSIG-ALLOW-DNSUPDATE =.*", multiline=True) |
+                  regex_replace(".* = ")).split(",") }}'
+          ALLOW_DNSUPDATE_FROM: >-
+            '{{ (item.stdout |
+                  regex_search("^ALLOW-DNSUPDATE-FROM =.*", multiline=True) |
+                  regex_replace(".* = ")).split(",") }}'
+      register: 'meta_entry_result'
+      loop_control:
+        label: '{{ item.item.key }}'
+      with_items: '{{ meta_all_result.results }}'
+
+    - name: 'meta : set entry'
+      command: >-
+        pdnsutil
+        set-meta
+        {{ item.0.item.item.key }}
+        {{ item.1.name }}
+        {{ item.1.entry|join(' ') }}
+      when:
+      - 'item.1.name is defined'
+      - 'item.1.name is string'
+      - 'item.1.name != ""'
+      - 'item.1.entry is defined'
+      - 'item.1.entry is sequence'
+      - 'item.1.entry|length > 0'
+      - 'item.1.entry | difference(item.0.ansible_facts.meta[
+          (item.1.name | regex_replace("-", "_"))
+         ])'
+      loop_control:
+        label: '{{ item.0.item.item.key }} : {{ item.1.name }}'
+      with_subelements:
+      - '{{ meta_entry_result.results }}'
+      - 'item.item.value.meta'
+
+    #
+    # Record
+    #
+
+    - name: 'record : get exists raw'
+      command: 'pdnsutil list-zone {{ item.key }}'
+      register: 'record_exists_raw_result'
+      changed_when: False
+      loop_control:
+        label: '{{ item.key }}'
+      with_dict: '{{ powerdns.zone | default({}) }}'
+
+    - name: 'record : get exists list'
+      set_fact:
+        record_exists_items:
+          zone: '{{ item.0.item.key }}'
+          name: '{{ item.1 | regex_replace("^(.*)\t(\d+)\tIN\t(.*)\t(.*)$", "\1") }}'
+          ttl:  '{{ item.1 | regex_replace("^(.*)\t(\d+)\tIN\t(.*)\t(.*)$", "\2") }}'
+          type: '{{ item.1 | regex_replace("^(.*)\t(\d+)\tIN\t(.*)\t(.*)$", "\3") }}'
+          val:  '{%- if item.1|regex_search("^.*\tIN\tNS\t.*$") -%}
+                 {{ item.1 | regex_replace("^(.*)\t(\d+)\tIN\t(.*)\t(.*)\.$", "\4") }}
+                 {%- else -%}
+                 {{ item.1 | regex_replace("^(.*)\t(\d+)\tIN\t(.*)\t(.*)$", "\4") }}
+                 {%- endif -%}'
+      register: 'record_exists_list_result'
+      when:
+      - 'item.1 | regex_search("^.*\t\d+\tIN\t.*\t.*$")'
+      loop_control:
+        label: '{{ item.0.item.key }}'
+      with_subelements:
+      - '{{ record_exists_raw_result.results }}'
+      - 'stdout_lines'
+
+    - name: 'record : get request raw'
+      set_fact:
+        record_request_raw_items:
+          zone: '{{ item.key }}'
+          val:  '{{ item.value.record }}'
+      register: 'record_request_raw_result'
+      when:
+      - 'item.value.record is defined'
+      - 'item.value.record is sequence'
+      - 'item.value.record|length > 0'
+      loop_control:
+        label: '{{ item.key }}'
+      with_dict: '{{ powerdns.zone | default({}) }}'
+
+    - name: 'record : get request list'
+      set_fact:
+        record_request_items:
+          zone: '{{ item.0.item.key }}'
+          name: '{{ item.1.name }}'
+          ttl:  '{{ item.1.ttl | default("3600") }}'
+          type: '{{ item.1.type }}'
+          val:  '{{ item.1.val }}'
+      register: 'record_request_list_result'
+      when:
+      - 'item.1.name is defined'
+      - 'item.1.name is string'
+      - 'item.1.name != ""'
+      - 'item.1.type is defined'
+      - 'item.1.type is string'
+      - 'item.1.type in [
+          "A",
+          "AAAA",
+          "AFSDB",
+          "ALIAS",
+          "CAA",
+          "CERT",
+          "CDNSKEY",
+          "CDS",
+          "CNAME",
+          "DNSKEY",
+          "DNAME",
+          "DS",
+          "HINFO",
+          "KEY",
+          "LOC",
+          "MX",
+          "NAPTR",
+          "NS",
+          "NSEC",
+          "NSEC3",
+          "NSEC3PARAM",
+          "OPENPGPKEY",
+          "PTR",
+          "RP",
+          "RRSIG",
+          "SOA",
+          "SPF",
+          "SSHFP",
+          "SRV",
+          "TKEY",
+          "TSIG",
+          "TLSA",
+          "SMIMEA",
+          "TXT",
+          "URI"
+        ]'
+      - 'item.1.val is defined'
+      - 'item.1.val is string'
+      - 'item.1.val != ""'
+      loop_control:
+        label: '{{ item.0.item.key }}'
+      with_subelements:
+      - '{{ record_request_raw_result.results }}'
+      - 'ansible_facts.record_request_raw_items.val'
+
+    - name: 'record : sort entry'
+      set_fact:
+        record:
+          define: '{{
+              record_request_list_result.results
+              |selectattr("ansible_facts", "defined")
+              |selectattr("ansible_facts.record_request_items", "defined")
+              |selectattr("ansible_facts.record_request_items.zone", "defined")
+              |selectattr("ansible_facts.record_request_items.name", "defined")
+              |selectattr("ansible_facts.record_request_items.ttl", "defined")
+              |selectattr("ansible_facts.record_request_items.type", "defined")
+              |selectattr("ansible_facts.record_request_items.val", "defined")
+              |map(attribute="ansible_facts.record_request_items")
+              |list
+            }}'
+          exists: '{{
+              record_exists_list_result.results
+              |selectattr("ansible_facts", "defined")
+              |selectattr("ansible_facts.record_exists_items", "defined")
+              |selectattr("ansible_facts.record_exists_items.zone", "defined")
+              |selectattr("ansible_facts.record_exists_items.name", "defined")
+              |selectattr("ansible_facts.record_exists_items.ttl", "defined")
+              |selectattr("ansible_facts.record_exists_items.type", "defined")
+              |selectattr("ansible_facts.record_exists_items.val", "defined")
+              |map(attribute="ansible_facts.record_exists_items")
+              |list
+            }}'
+
+    - name: 'record : set entry'
+      command: >-
+        pdnsutil
+        add-record
+        {{ item.zone }}
+        "{{ item.name | regex_replace("\.?" + item.zone + "$", "") }}"
+        {{ item.type }}
+        {% if item.val is string -%}
+        "{{ item.val }}"
+        {% elif item.val is sequence -%}
+        "{{ item.val|join('" "') }}"
+        {% endif -%}
+      when:
+      - 'item.name is defined'
+      - 'item.name is string'
+      - 'item.name != ""'
+      - 'item.type is defined'
+      - 'item.type is string'
+      - 'item.type in [
+          "A",
+          "AAAA",
+          "AFSDB",
+          "ALIAS",
+          "CAA",
+          "CERT",
+          "CDNSKEY",
+          "CDS",
+          "CNAME",
+          "DNSKEY",
+          "DNAME",
+          "DS",
+          "HINFO",
+          "KEY",
+          "LOC",
+          "MX",
+          "NAPTR",
+          "NS",
+          "NSEC",
+          "NSEC3",
+          "NSEC3PARAM",
+          "OPENPGPKEY",
+          "PTR",
+          "RP",
+          "RRSIG",
+          "SOA",
+          "SPF",
+          "SSHFP",
+          "SRV",
+          "TKEY",
+          "TSIG",
+          "TLSA",
+          "SMIMEA",
+          "TXT",
+          "URI"
+        ]'
+      - 'item.val is defined'
+      - '(
+          item.val is string and item.val != ""
+         ) or (
+          item.val is sequence and item.val|length > 0
+         )'
+      loop_control:
+        label: '{{ item.zone }} : {{ item.type }} : {{ item.name }}'
+      with_items: '{{ record.define|difference(record.exists) }}'
+
+    #
+    # Check
+    #
+
+    - name: 'zone : check'
+      command: 'pdnsutil check-zone {{ item.item.key }}'
+      changed_when: 'False'
+      when:
+      - 'item.item.value.record is defined'
+      - 'item.item.value.record is sequence'
+      - 'item.item.value.record
+          | selectattr("type", "defined")
+          | selectattr("type", "equalto", "NS")
+          | map(attribute="val") | list | length > 0'
+      loop_control:
+        label: '{{ item.item.key }}'
+      with_items: '{{ show_zone_result.results }}'
+
+    # block
+    when:
+    - 'powerdns.active.authoritative is sameas true'
+
+  # block
+  tags:
+  - dns
+  - powerdns

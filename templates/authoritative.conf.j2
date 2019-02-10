@@ -1,0 +1,385 @@
+#
+# {{ ansible_managed }}
+#
+
+{% if powerdns.config.authoritative['8bit-dns'] is defined %}
+8bit-dns={{ powerdns.config.authoritative['8bit-dns'] }}
+{% endif %}
+{% if powerdns.config.authoritative['allow-axfr-ips'] is defined %}
+allow-axfr-ips={{ powerdns.config.authoritative['allow-axfr-ips'] }}
+{% endif %}
+{% if powerdns.config.authoritative['allow-dnsupdate-from'] is defined %}
+allow-dnsupdate-from={{ powerdns.config.authoritative['allow-dnsupdate-from'] }}
+{% endif %}
+{% if powerdns.config.authoritative['allow-notify-from'] is defined %}
+allow-notify-from={{ powerdns.config.authoritative['allow-notify-from'] }}
+{% endif %}
+{% if powerdns.config.authoritative['allow-unsigned-notify'] is defined %}
+allow-unsigned-notify={{ powerdns.config.authoritative['allow-unsigned-notify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['allow-unsigned-supermaster'] is defined %}
+allow-unsigned-supermaster={{ powerdns.config.authoritative['allow-unsigned-supermaster'] }}
+{% endif %}
+{% if powerdns.config.authoritative['also-notify'] is defined %}
+also-notify={{ powerdns.config.authoritative['also-notify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['any-to-tcp'] is defined %}
+any-to-tcp={{ powerdns.config.authoritative['any-to-tcp'] }}
+{% endif %}
+{% if powerdns.config.authoritative['api'] is defined %}
+api={{ powerdns.config.authoritative['api'] }}
+{% endif %}
+{% if powerdns.config.authoritative['api-key'] is defined %}
+api-key={{ powerdns.config.authoritative['api-key'] }}
+{% endif %}
+{% if powerdns.config.authoritative['api-logfile'] is defined %}
+api-logfile={{ powerdns.config.authoritative['api-logfile'] }}
+{% endif %}
+{% if powerdns.config.authoritative['api-readonly'] is defined %}
+api-readonly={{ powerdns.config.authoritative['api-readonly'] }}
+{% endif %}
+{% if powerdns.config.authoritative['axfr-lower-serial'] is defined %}
+axfr-lower-serial={{ powerdns.config.authoritative['axfr-lower-serial'] }}
+{% endif %}
+{% if powerdns.config.authoritative['cache-ttl'] is defined %}
+cache-ttl={{ powerdns.config.authoritative['cache-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['carbon-interval'] is defined %}
+carbon-interval={{ powerdns.config.authoritative['carbon-interval'] }}
+{% endif %}
+{% if powerdns.config.authoritative['carbon-ourname'] is defined %}
+carbon-ourname={{ powerdns.config.authoritative['carbon-ourname'] }}
+{% endif %}
+{% if powerdns.config.authoritative['carbon-server'] is defined %}
+carbon-server={{ powerdns.config.authoritative['carbon-server'] }}
+{% endif %}
+{% if powerdns.config.authoritative['chroot'] is defined %}
+chroot={{ powerdns.config.authoritative['chroot'] }}
+{% endif %}
+{% if powerdns.config.authoritative['config-dir'] is defined %}
+config-dir={{ powerdns.config.authoritative['config-dir'] }}
+{% else %}
+config-dir={{ powerdns.config_dir.authoritative }}
+{% endif %}
+{% if powerdns.config.authoritative['config-name'] is defined %}
+config-name={{ powerdns.config.authoritative['config-name'] }}
+{% endif %}
+{% if powerdns.config.authoritative['control-console'] is defined %}
+control-console={{ powerdns.config.authoritative['control-console'] }}
+{% endif %}
+{% if powerdns.config.authoritative['daemon'] is defined %}
+daemon={{ powerdns.config.authoritative['daemon'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-ksk-algorithm'] is defined %}
+default-ksk-algorithm={{ powerdns.config.authoritative['default-ksk-algorithm'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-ksk-size'] is defined %}
+default-ksk-size={{ powerdns.config.authoritative['default-ksk-size'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-soa-edit'] is defined %}
+default-soa-edit={{ powerdns.config.authoritative['default-soa-edit'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-soa-edit-signed'] is defined %}
+default-soa-edit-signed={{ powerdns.config.authoritative['default-soa-edit-signed'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-soa-mail'] is defined %}
+default-soa-mail={{ powerdns.config.authoritative['default-soa-mail'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-soa-name'] is defined %}
+default-soa-name={{ powerdns.config.authoritative['default-soa-name'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-ttl'] is defined %}
+default-ttl={{ powerdns.config.authoritative['default-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-zsk-algorithm'] is defined %}
+default-zsk-algorithm={{ powerdns.config.authoritative['default-zsk-algorithm'] }}
+{% endif %}
+{% if powerdns.config.authoritative['default-zsk-size'] is defined %}
+default-zsk-size={{ powerdns.config.authoritative['default-zsk-size'] }}
+{% endif %}
+{% if powerdns.config.authoritative['direct-dnskey'] is defined %}
+direct-dnskey={{ powerdns.config.authoritative['direct-dnskey'] }}
+{% endif %}
+{% if powerdns.config.authoritative['disable-axfr'] is defined %}
+disable-axfr={{ powerdns.config.authoritative['disable-axfr'] }}
+{% endif %}
+{% if powerdns.config.authoritative['disable-axfr-rectify'] is defined %}
+disable-axfr-rectify={{ powerdns.config.authoritative['disable-axfr-rectify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['disable-syslog'] is defined %}
+disable-syslog={{ powerdns.config.authoritative['disable-syslog'] }}
+{% endif %}
+{% if powerdns.config.authoritative['disable-tcp'] is defined %}
+disable-tcp={{ powerdns.config.authoritative['disable-tcp'] }}
+{% endif %}
+{% if powerdns.config.authoritative['distributor-threads'] is defined %}
+distributor-threads={{ powerdns.config.authoritative['distributor-threads'] }}
+{% endif %}
+{% if powerdns.config.authoritative['dname-processing'] is defined %}
+dname-processing={{ powerdns.config.authoritative['dname-processing'] }}
+{% endif %}
+{% if powerdns.config.authoritative['dnssec-key-cache-ttl'] is defined %}
+dnssec-key-cache-ttl={{ powerdns.config.authoritative['dnssec-key-cache-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['dnsupdate'] is defined %}
+dnsupdate={{ powerdns.config.authoritative['dnsupdate'] }}
+{% endif %}
+{% if powerdns.config.authoritative['do-ipv6-additional-processing'] is defined %}
+do-ipv6-additional-processing={{ powerdns.config.authoritative['do-ipv6-additional-processing'] }}
+{% endif %}
+{% if powerdns.config.authoritative['domain-metadata-cache-ttl'] is defined %}
+domain-metadata-cache-ttl={{ powerdns.config.authoritative['domain-metadata-cache-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['edns-subnet-processing'] is defined %}
+edns-subnet-processing={{ powerdns.config.authoritative['edns-subnet-processing'] }}
+{% endif %}
+{% if powerdns.config.authoritative['entropy-source'] is defined %}
+entropy-source={{ powerdns.config.authoritative['entropy-source'] }}
+{% endif %}
+{% if powerdns.config.authoritative['expand-alias'] is defined %}
+expand-alias={{ powerdns.config.authoritative['expand-alias'] }}
+{% endif %}
+{% if powerdns.config.authoritative['forward-dnsupdate'] is defined %}
+forward-dnsupdate={{ powerdns.config.authoritative['forward-dnsupdate'] }}
+{% endif %}
+{% if powerdns.config.authoritative['forward-notify'] is defined %}
+forward-notify={{ powerdns.config.authoritative['forward-notify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['guardian'] is defined %}
+guardian={{ powerdns.config.authoritative['guardian'] }}
+{% endif %}
+include-dir={{ powerdns.include_dir.authoritative }}
+{% if powerdns.config.authoritative['include-dir'] is defined %}
+include-dir+={{ powerdns.config.authoritative['include-dir'] }}
+{% endif %}
+{% if powerdns.config.authoritative['launch'] is defined %}
+launch={{ powerdns.config.authoritative['launch'] }}
+{% elif powerdns.config.backend is defined or powerdns.config.backend.keys()|length > 0 %}
+launch={{ powerdns.config.backend.keys()|join(',') }}
+{% else %}
+launch=bind
+{% endif %}
+{% if powerdns.config.authoritative['load-modules'] is defined %}
+load-modules={{ powerdns.config.authoritative['load-modules'] }}
+{% endif %}
+{% if powerdns.config.authoritative['local-address'] is defined %}
+{%   if powerdns.config.authoritative['local-address'] is string and powerdns.config.authoritative['local-address'] != "" %}
+local-address={{ powerdns.config.authoritative['local-address'] }}
+{%   elif powerdns.config.authoritative['local-address'] is sequence and powerdns.config.authoritative['local-address']|length > 0 %}
+local-address={{ powerdns.config.authoritative['local-address']|join(", ") }}
+{%   endif %}
+{% endif %}
+{% if powerdns.config.authoritative['local-address-nonexist-fail'] is defined %}
+local-address-nonexist-fail={{ powerdns.config.authoritative['local-address-nonexist-fail'] }}
+{% endif %}
+{% if powerdns.config.authoritative['local-ipv6'] is defined %}
+local-ipv6={{ powerdns.config.authoritative['local-ipv6'] }}
+{% endif %}
+{% if powerdns.config.authoritative['local-ipv6-nonexist-fail'] is defined %}
+local-ipv6-nonexist-fail={{ powerdns.config.authoritative['local-ipv6-nonexist-fail'] }}
+{% endif %}
+{% if powerdns.config.authoritative['local-port'] is defined %}
+local-port={{ powerdns.config.authoritative['local-port'] }}
+{% endif %}
+{% if powerdns.config.authoritative['log-dns-details'] is defined %}
+log-dns-details={{ powerdns.config.authoritative['log-dns-details'] }}
+{% endif %}
+{% if powerdns.config.authoritative['log-dns-queries'] is defined %}
+log-dns-queries={{ powerdns.config.authoritative['log-dns-queries'] }}
+{% endif %}
+{% if powerdns.config.authoritative['log-timestamp'] is defined %}
+log-timestamp={{ powerdns.config.authoritative['log-timestamp'] }}
+{% endif %}
+{% if powerdns.config.authoritative['logging-facility'] is defined %}
+logging-facility={{ powerdns.config.authoritative['logging-facility'] }}
+{% endif %}
+{% if powerdns.config.authoritative['loglevel'] is defined %}
+loglevel={{ powerdns.config.authoritative['loglevel'] }}
+{% endif %}
+{% if powerdns.config.authoritative['lua-axfr-script'] is defined %}
+lua-axfr-script={{ powerdns.config.authoritative['lua-axfr-script'] }}
+{% endif %}
+{% if powerdns.config.authoritative['lua-dnsupdate-policy-script'] is defined %}
+lua-dnsupdate-policy-script={{ powerdns.config.authoritative['lua-dnsupdate-policy-script'] }}
+{% endif %}
+{% if powerdns.config.authoritative['lua-prequery-script'] is defined %}
+lua-prequery-script={{ powerdns.config.authoritative['lua-prequery-script'] }}
+{% endif %}
+{% if powerdns.config.authoritative['master'] is defined %}
+master={{ powerdns.config.authoritative['master'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-cache-entries'] is defined %}
+max-cache-entries={{ powerdns.config.authoritative['max-cache-entries'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-ent-entries'] is defined %}
+max-ent-entries={{ powerdns.config.authoritative['max-ent-entries'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-nsec3-iterations'] is defined %}
+max-nsec3-iterations={{ powerdns.config.authoritative['max-nsec3-iterations'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-packet-cache-entries'] is defined %}
+max-packet-cache-entries={{ powerdns.config.authoritative['max-packet-cache-entries'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-queue-length'] is defined %}
+max-queue-length={{ powerdns.config.authoritative['max-queue-length'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-signature-cache-entries'] is defined %}
+max-signature-cache-entries={{ powerdns.config.authoritative['max-signature-cache-entries'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-tcp-connection-duration'] is defined %}
+max-tcp-connection-duration={{ powerdns.config.authoritative['max-tcp-connection-duration'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-tcp-connections'] is defined %}
+max-tcp-connections={{ powerdns.config.authoritative['max-tcp-connections'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-tcp-connections-per-client'] is defined %}
+max-tcp-connections-per-client={{ powerdns.config.authoritative['max-tcp-connections-per-client'] }}
+{% endif %}
+{% if powerdns.config.authoritative['max-tcp-transactions-per-conn'] is defined %}
+max-tcp-transactions-per-conn={{ powerdns.config.authoritative['max-tcp-transactions-per-conn'] }}
+{% endif %}
+{% if powerdns.config.authoritative['no-shuffle'] is defined %}
+no-shuffle={{ powerdns.config.authoritative['no-shuffle'] }}
+{% endif %}
+{% if powerdns.config.authoritative['non-local-bind'] is defined %}
+non-local-bind={{ powerdns.config.authoritative['non-local-bind'] }}
+{% endif %}
+{% if powerdns.config.authoritative['only-notify'] is defined %}
+only-notify={{ powerdns.config.authoritative['only-notify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['out-of-zone-additional-processing'] is defined %}
+out-of-zone-additional-processing={{ powerdns.config.authoritative['out-of-zone-additional-processing'] }}
+{% endif %}
+{% if powerdns.config.authoritative['outgoing-axfr-expand-alias'] is defined %}
+outgoing-axfr-expand-alias={{ powerdns.config.authoritative['outgoing-axfr-expand-alias'] }}
+{% endif %}
+{% if powerdns.config.authoritative['overload-queue-length'] is defined %}
+overload-queue-length={{ powerdns.config.authoritative['overload-queue-length'] }}
+{% endif %}
+{% if powerdns.config.authoritative['prevent-self-notification'] is defined %}
+prevent-self-notification={{ powerdns.config.authoritative['prevent-self-notification'] }}
+{% endif %}
+{% if powerdns.config.authoritative['query-cache-ttl'] is defined %}
+query-cache-ttl={{ powerdns.config.authoritative['query-cache-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['query-local-address'] is defined %}
+query-local-address={{ powerdns.config.authoritative['query-local-address'] }}
+{% endif %}
+{% if powerdns.config.authoritative['query-local-address6'] is defined %}
+query-local-address6={{ powerdns.config.authoritative['query-local-address6'] }}
+{% endif %}
+{% if powerdns.config.authoritative['query-logging'] is defined %}
+query-logging={{ powerdns.config.authoritative['query-logging'] }}
+{% endif %}
+{% if powerdns.config.authoritative['queue-limit'] is defined %}
+queue-limit={{ powerdns.config.authoritative['queue-limit'] }}
+{% endif %}
+{% if powerdns.config.authoritative['receiver-threads'] is defined %}
+receiver-threads={{ powerdns.config.authoritative['receiver-threads'] }}
+{% endif %}
+{% if powerdns.config.authoritative['resolver'] is defined %}
+resolver={{ powerdns.config.authoritative['resolver'] }}
+{% endif %}
+{% if powerdns.config.authoritative['retrieval-threads'] is defined %}
+retrieval-threads={{ powerdns.config.authoritative['retrieval-threads'] }}
+{% endif %}
+{% if powerdns.config.authoritative['reuseport'] is defined %}
+reuseport={{ powerdns.config.authoritative['reuseport'] }}
+{% endif %}
+{% if powerdns.config.authoritative['security-poll-suffix'] is defined %}
+security-poll-suffix={{ powerdns.config.authoritative['security-poll-suffix'] }}
+{% endif %}
+{% if powerdns.config.authoritative['server-id'] is defined %}
+server-id={{ powerdns.config.authoritative['server-id'] }}
+{% endif %}
+{% if powerdns.config.authoritative['setgid'] is defined %}
+setgid={{ powerdns.config.authoritative['setgid'] }}
+{% else %}
+setgid={{ powerdns.user_group.authoritative }}
+{% endif %}
+{% if powerdns.config.authoritative['setuid'] is defined %}
+setuid={{ powerdns.config.authoritative['setuid'] }}
+{% else %}
+setuid={{ powerdns.user_owner.authoritative }}
+{% endif %}
+{% if powerdns.config.authoritative['signing-threads'] is defined %}
+signing-threads={{ powerdns.config.authoritative['signing-threads'] }}
+{% endif %}
+{% if powerdns.config.authoritative['slave'] is defined %}
+slave={{ powerdns.config.authoritative['slave'] }}
+{% endif %}
+{% if powerdns.config.authoritative['slave-cycle-interval'] is defined %}
+slave-cycle-interval={{ powerdns.config.authoritative['slave-cycle-interval'] }}
+{% endif %}
+{% if powerdns.config.authoritative['slave-renotify'] is defined %}
+slave-renotify={{ powerdns.config.authoritative['slave-renotify'] }}
+{% endif %}
+{% if powerdns.config.authoritative['soa-expire-default'] is defined %}
+soa-expire-default={{ powerdns.config.authoritative['soa-expire-default'] }}
+{% endif %}
+{% if powerdns.config.authoritative['soa-minimum-ttl'] is defined %}
+soa-minimum-ttl={{ powerdns.config.authoritative['soa-minimum-ttl'] }}
+{% endif %}
+{% if powerdns.config.authoritative['soa-refresh-default'] is defined %}
+soa-refresh-default={{ powerdns.config.authoritative['soa-refresh-default'] }}
+{% endif %}
+{% if powerdns.config.authoritative['soa-retry-default'] is defined %}
+soa-retry-default={{ powerdns.config.authoritative['soa-retry-default'] }}
+{% endif %}
+{% if powerdns.config.authoritative['socket-dir'] is defined %}
+socket-dir={{ powerdns.config.authoritative['socket-dir'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-control-address'] is defined %}
+tcp-control-address={{ powerdns.config.authoritative['tcp-control-address'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-control-port'] is defined %}
+tcp-control-port={{ powerdns.config.authoritative['tcp-control-port'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-control-range'] is defined %}
+tcp-control-range={{ powerdns.config.authoritative['tcp-control-range'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-control-secret'] is defined %}
+tcp-control-secret={{ powerdns.config.authoritative['tcp-control-secret'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-fast-open'] is defined %}
+tcp-fast-open={{ powerdns.config.authoritative['tcp-fast-open'] }}
+{% endif %}
+{% if powerdns.config.authoritative['tcp-idle-timeout'] is defined %}
+tcp-idle-timeout={{ powerdns.config.authoritative['tcp-idle-timeout'] }}
+{% endif %}
+{% if powerdns.config.authoritative['traceback-handler'] is defined %}
+traceback-handler={{ powerdns.config.authoritative['traceback-handler'] }}
+{% endif %}
+{% if powerdns.config.authoritative['trusted-notification-proxy'] is defined %}
+trusted-notification-proxy={{ powerdns.config.authoritative['trusted-notification-proxy'] }}
+{% endif %}
+{% if powerdns.config.authoritative['udp-truncation-threshold'] is defined %}
+udp-truncation-threshold={{ powerdns.config.authoritative['udp-truncation-threshold'] }}
+{% endif %}
+{% if powerdns.config.authoritative['version-string'] is defined %}
+version-string={{ powerdns.config.authoritative['version-string'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver'] is defined %}
+webserver={{ powerdns.config.authoritative['webserver'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver-address'] is defined %}
+webserver-address={{ powerdns.config.authoritative['webserver-address'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver-allow-from'] is defined %}
+webserver-allow-from={{ powerdns.config.authoritative['webserver-allow-from'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver-password'] is defined %}
+webserver-password={{ powerdns.config.authoritative['webserver-password'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver-port'] is defined %}
+webserver-port={{ powerdns.config.authoritative['webserver-port'] }}
+{% endif %}
+{% if powerdns.config.authoritative['webserver-print-arguments'] is defined %}
+webserver-print-arguments={{ powerdns.config.authoritative['webserver-print-arguments'] }}
+{% endif %}
+{% if powerdns.config.authoritative['write-pid'] is defined %}
+write-pid={{ powerdns.config.authoritative['write-pid'] }}
+{% endif %}
+{% if powerdns.config.authoritative['xfr-max-received-mbytes'] is defined %}
+xfr-max-received-mbytes={{ powerdns.config.authoritative['xfr-max-received-mbytes'] }}
+{% endif %}

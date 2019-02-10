@@ -1,0 +1,353 @@
+#
+# {{ ansible_managed }}
+#
+
+{% if powerdns.config.recursor['allow-from'] is defined %}
+allow-from={{ powerdns.config.recursor['allow-from'] }}
+{% endif %}
+{% if powerdns.config.recursor['allow-from-file'] is defined %}
+allow-from-file={{ powerdns.config.recursor['allow-from-file'] }}
+{% endif %}
+{% if powerdns.config.recursor['any-to-tcp'] is defined %}
+any-to-tcp={{ powerdns.config.recursor['any-to-tcp'] }}
+{% endif %}
+{% if powerdns.config.recursor['api-config-dir'] is defined %}
+api-config-dir={{ powerdns.config.recursor['api-config-dir'] }}
+{% endif %}
+{% if powerdns.config.recursor['api-key'] is defined %}
+api-key={{ powerdns.config.recursor['api-key'] }}
+{% endif %}
+{% if powerdns.config.recursor['api-logfile'] is defined %}
+api-logfile={{ powerdns.config.recursor['api-logfile'] }}
+{% endif %}
+{% if powerdns.config.recursor['api-readonly'] is defined %}
+api-readonly={{ powerdns.config.recursor['api-readonly'] }}
+{% endif %}
+{% if powerdns.config.recursor['auth-zones'] is defined %}
+auth-zones={{ powerdns.config.recursor['auth-zones'] }}
+{% endif %}
+{% if powerdns.config.recursor['carbon-interval'] is defined %}
+carbon-interval={{ powerdns.config.recursor['carbon-interval'] }}
+{% endif %}
+{% if powerdns.config.recursor['carbon-ourname'] is defined %}
+carbon-ourname={{ powerdns.config.recursor['carbon-ourname'] }}
+{% endif %}
+{% if powerdns.config.recursor['carbon-server'] is defined %}
+carbon-server={{ powerdns.config.recursor['carbon-server'] }}
+{% endif %}
+{% if powerdns.config.recursor['chroot'] is defined %}
+chroot={{ powerdns.config.recursor['chroot'] }}
+{% endif %}
+{% if powerdns.config.recursor['client-tcp-timeout'] is defined %}
+client-tcp-timeout={{ powerdns.config.recursor['client-tcp-timeout'] }}
+{% endif %}
+{% if powerdns.config.recursor['config-dir'] is defined %}
+config-dir={{ powerdns.config.recursor['config-dir'] }}
+{% else %}
+config-dir={{ powerdns.config_dir.recursor }}
+{% endif %}
+{% if powerdns.config.recursor['config-name'] is defined %}
+config-name={{ powerdns.config.recursor['config-name'] }}
+{% endif %}
+{% if powerdns.config.recursor['cpu-map'] is defined %}
+cpu-map={{ powerdns.config.recursor['cpu-map'] }}
+{% endif %}
+{% if powerdns.config.recursor['daemon'] is defined %}
+daemon={{ powerdns.config.recursor['daemon'] }}
+{% endif %}
+{% if powerdns.config.recursor['delegation-only'] is defined %}
+delegation-only={{ powerdns.config.recursor['delegation-only'] }}
+{% endif %}
+{% if powerdns.config.recursor['disable-packetcache'] is defined %}
+disable-packetcache={{ powerdns.config.recursor['disable-packetcache'] }}
+{% endif %}
+{% if powerdns.config.recursor['disable-syslog'] is defined %}
+disable-syslog={{ powerdns.config.recursor['disable-syslog'] }}
+{% endif %}
+{% if powerdns.config.recursor['dnssec'] is defined %}
+dnssec={{ powerdns.config.recursor['dnssec'] }}
+{% endif %}
+{% if powerdns.config.recursor['dnssec-log-bogus'] is defined %}
+dnssec-log-bogus={{ powerdns.config.recursor['dnssec-log-bogus'] }}
+{% endif %}
+{% if powerdns.config.recursor['dont-query'] is defined %}
+dont-query={{ powerdns.config.recursor['dont-query'] }}
+{% endif %}
+{% if powerdns.config.recursor['ecs-ipv4-bits'] is defined %}
+ecs-ipv4-bits={{ powerdns.config.recursor['ecs-ipv4-bits'] }}
+{% endif %}
+{% if powerdns.config.recursor['ecs-ipv6-bits'] is defined %}
+ecs-ipv6-bits={{ powerdns.config.recursor['ecs-ipv6-bits'] }}
+{% endif %}
+{% if powerdns.config.recursor['ecs-scope-zero-address'] is defined %}
+ecs-scope-zero-address={{ powerdns.config.recursor['ecs-scope-zero-address'] }}
+{% endif %}
+{% if powerdns.config.recursor['edns-outgoing-bufsize'] is defined %}
+edns-outgoing-bufsize={{ powerdns.config.recursor['edns-outgoing-bufsize'] }}
+{% endif %}
+{% if powerdns.config.recursor['edns-subnet-whitelist'] is defined %}
+edns-subnet-whitelist={{ powerdns.config.recursor['edns-subnet-whitelist'] }}
+{% endif %}
+{% if powerdns.config.recursor['entropy-source'] is defined %}
+entropy-source={{ powerdns.config.recursor['entropy-source'] }}
+{% endif %}
+{% if powerdns.config.recursor['etc-hosts-file'] is defined %}
+etc-hosts-file={{ powerdns.config.recursor['etc-hosts-file'] }}
+{% endif %}
+{% if powerdns.config.recursor['export-etc-hosts'] is defined %}
+export-etc-hosts={{ powerdns.config.recursor['export-etc-hosts'] }}
+{% endif %}
+{% if powerdns.config.recursor['export-etc-hosts-search-suffix'] is defined %}
+export-etc-hosts-search-suffix={{ powerdns.config.recursor['export-etc-hosts-search-suffix'] }}
+{% endif %}
+{% if powerdns.config.recursor['forward-zones'] is defined %}
+{%   if powerdns.config.recursor['forward-zones'] is string %}
+forward-zones={{ powerdns.config.recursor['forward-zones'] }}
+{%   elif powerdns.config.recursor['forward-zones'] is mapping %}
+{%     set forward_zones_recurse = [] %}
+{%     for k, v in powerdns.config.recursor['forward-zones'].iteritems() %}
+{%       set _ = forward_zones_recurse.append(k + '=' + (v | join(';'))) %}
+{%     endfor %}
+forward-zones={{ forward_zones_recurse | join(', ') }}
+{%   endif %}
+{% endif %}
+{% if powerdns.config.recursor['forward-zones-file'] is defined %}
+forward-zones-file={{ powerdns.config.recursor['forward-zones-file'] }}
+{% endif %}
+{% if powerdns.config.recursor['forward-zones-recurse'] is defined %}
+{%   if powerdns.config.recursor['forward-zones-recurse'] is string %}
+forward-zones-recurse={{ powerdns.config.recursor['forward-zones-recurse'] }}
+{%   elif powerdns.config.recursor['forward-zones-recurse'] is mapping %}
+{%     set forward_zones_recurse = [] %}
+{%     for k, v in powerdns.config.recursor['forward-zones-recurse'].iteritems() %}
+{%       set _ = forward_zones_recurse.append(k + '=' + (v | join(';'))) %}
+{%     endfor %}
+forward-zones-recurse={{ forward_zones_recurse | join(', ') }}
+{%   endif %}
+{% endif %}
+{% if powerdns.config.recursor['gettag-needs-edns-options'] is defined %}
+gettag-needs-edns-options={{ powerdns.config.recursor['gettag-needs-edns-options'] }}
+{% endif %}
+{% if powerdns.config.recursor['hint-file'] is defined %}
+hint-file={{ powerdns.config.recursor['hint-file'] }}
+{% endif %}
+include-dir={{ powerdns.include_dir.recursor }}
+{% if powerdns.config.recursor['include-dir'] is defined %}
+include-dir+={{ powerdns.config.recursor['include-dir'] }}
+{% endif %}
+{% if powerdns.config.recursor['latency-statistic-size'] is defined %}
+latency-statistic-size={{ powerdns.config.recursor['latency-statistic-size'] }}
+{% endif %}
+{% if powerdns.config.recursor['local-address'] is defined %}
+{%   if powerdns.config.recursor['local-address'] is string and powerdns.config.recursor['local-address'] != "" %}
+local-address={{ powerdns.config.recursor['local-address'] }}
+{%   elif powerdns.config.recursor['local-address'] is sequence and powerdns.config.recursor['local-address']|length > 0 %}
+local-address={{ powerdns.config.recursor['local-address']|join(", ") }}
+{%   endif %}
+{% endif %}
+{% if powerdns.config.recursor['local-port'] is defined %}
+local-port={{ powerdns.config.recursor['local-port'] }}
+{% endif %}
+{% if powerdns.config.recursor['log-common-errors'] is defined %}
+log-common-errors={{ powerdns.config.recursor['log-common-errors'] }}
+{% endif %}
+{% if powerdns.config.recursor['log-rpz-changes'] is defined %}
+log-rpz-changes={{ powerdns.config.recursor['log-rpz-changes'] }}
+{% endif %}
+{% if powerdns.config.recursor['log-timestamp'] is defined %}
+log-timestamp={{ powerdns.config.recursor['log-timestamp'] }}
+{% endif %}
+{% if powerdns.config.recursor['logging-facility'] is defined %}
+logging-facility={{ powerdns.config.recursor['logging-facility'] }}
+{% endif %}
+{% if powerdns.config.recursor['loglevel'] is defined %}
+loglevel={{ powerdns.config.recursor['loglevel'] }}
+{% endif %}
+{% if powerdns.config.recursor['lowercase-outgoing'] is defined %}
+lowercase-outgoing={{ powerdns.config.recursor['lowercase-outgoing'] }}
+{% endif %}
+{% if powerdns.config.recursor['lua-config-file'] is defined %}
+{%   if powerdns.config.recursor['lua-config-file'] == 'recursor.lua' %}
+lua-config-file={{ powerdns.config_dir.recursor }}/recursor.lua
+{%   else %}
+lua-config-file={{ powerdns.config.recursor['lua-config-file'] }}
+{%   endif %}
+{% endif %}
+{% if powerdns.config.recursor['lua-dns-script'] is defined %}
+lua-dns-script={{ powerdns.config.recursor['lua-dns-script'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-cache-entries'] is defined %}
+max-cache-entries={{ powerdns.config.recursor['max-cache-entries'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-cache-ttl'] is defined %}
+max-cache-ttl={{ powerdns.config.recursor['max-cache-ttl'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-mthreads'] is defined %}
+max-mthreads={{ powerdns.config.recursor['max-mthreads'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-negative-ttl'] is defined %}
+max-negative-ttl={{ powerdns.config.recursor['max-negative-ttl'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-packetcache-entries'] is defined %}
+max-packetcache-entries={{ powerdns.config.recursor['max-packetcache-entries'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-qperq'] is defined %}
+max-qperq={{ powerdns.config.recursor['max-qperq'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-recursion-depth'] is defined %}
+max-recursion-depth={{ powerdns.config.recursor['max-recursion-depth'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-tcp-clients'] is defined %}
+max-tcp-clients={{ powerdns.config.recursor['max-tcp-clients'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-tcp-per-client'] is defined %}
+max-tcp-per-client={{ powerdns.config.recursor['max-tcp-per-client'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-tcp-queries-per-connection'] is defined %}
+max-tcp-queries-per-connection={{ powerdns.config.recursor['max-tcp-queries-per-connection'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-total-msec'] is defined %}
+max-total-msec={{ powerdns.config.recursor['max-total-msec'] }}
+{% endif %}
+{% if powerdns.config.recursor['max-udp-queries-per-round'] is defined %}
+max-udp-queries-per-round={{ powerdns.config.recursor['max-udp-queries-per-round'] }}
+{% endif %}
+{% if powerdns.config.recursor['minimum-ttl-override'] is defined %}
+minimum-ttl-override={{ powerdns.config.recursor['minimum-ttl-override'] }}
+{% endif %}
+{% if powerdns.config.recursor['network-timeout'] is defined %}
+network-timeout={{ powerdns.config.recursor['network-timeout'] }}
+{% endif %}
+{% if powerdns.config.recursor['no-shuffle'] is defined %}
+no-shuffle={{ powerdns.config.recursor['no-shuffle'] }}
+{% endif %}
+{% if powerdns.config.recursor['non-local-bind'] is defined %}
+non-local-bind={{ powerdns.config.recursor['non-local-bind'] }}
+{% endif %}
+{% if powerdns.config.recursor['nsec3-max-iterations'] is defined %}
+nsec3-max-iterations={{ powerdns.config.recursor['nsec3-max-iterations'] }}
+{% endif %}
+{% if powerdns.config.recursor['packetcache-servfail-ttl'] is defined %}
+packetcache-servfail-ttl={{ powerdns.config.recursor['packetcache-servfail-ttl'] }}
+{% endif %}
+{% if powerdns.config.recursor['packetcache-ttl'] is defined %}
+packetcache-ttl={{ powerdns.config.recursor['packetcache-ttl'] }}
+{% endif %}
+{% if powerdns.config.recursor['pdns-distributes-queries'] is defined %}
+pdns-distributes-queries={{ powerdns.config.recursor['pdns-distributes-queries'] }}
+{% endif %}
+{% if powerdns.config.recursor['processes'] is defined %}
+processes={{ powerdns.config.recursor['processes'] }}
+{% endif %}
+{% if powerdns.config.recursor['query-local-address'] is defined %}
+query-local-address={{ powerdns.config.recursor['query-local-address'] }}
+{% endif %}
+{% if powerdns.config.recursor['query-local-address6'] is defined %}
+query-local-address6={{ powerdns.config.recursor['query-local-address6'] }}
+{% endif %}
+{% if powerdns.config.recursor['quiet'] is defined %}
+quiet={{ powerdns.config.recursor['quiet'] }}
+{% endif %}
+{% if powerdns.config.recursor['reuseport'] is defined %}
+reuseport={{ powerdns.config.recursor['reuseport'] }}
+{% endif %}
+{% if powerdns.config.recursor['root-nx-trust'] is defined %}
+root-nx-trust={{ powerdns.config.recursor['root-nx-trust'] }}
+{% endif %}
+{% if powerdns.config.recursor['security-poll-suffix'] is defined %}
+security-poll-suffix={{ powerdns.config.recursor['security-poll-suffix'] }}
+{% endif %}
+{% if powerdns.config.recursor['serve-rfc1918'] is defined %}
+serve-rfc1918={{ powerdns.config.recursor['serve-rfc1918'] }}
+{% endif %}
+{% if powerdns.config.recursor['server-down-max-fails'] is defined %}
+server-down-max-fails={{ powerdns.config.recursor['server-down-max-fails'] }}
+{% endif %}
+{% if powerdns.config.recursor['server-down-throttle-time'] is defined %}
+server-down-throttle-time={{ powerdns.config.recursor['server-down-throttle-time'] }}
+{% endif %}
+{% if powerdns.config.recursor['server-id'] is defined %}
+server-id={{ powerdns.config.recursor['server-id'] }}
+{% endif %}
+{% if powerdns.config.recursor['setgid'] is defined %}
+setgid={{ powerdns.config.recursor['setgid'] }}
+{% else %}
+setgid={{ powerdns.user_group.recursor }}
+{% endif %}
+{% if powerdns.config.recursor['setuid'] is defined %}
+setuid={{ powerdns.config.recursor['setuid'] }}
+{% else %}
+setuid={{ powerdns.user_owner.recursor }}
+{% endif %}
+{% if powerdns.config.recursor['single-socket'] is defined %}
+single-socket={{ powerdns.config.recursor['single-socket'] }}
+{% endif %}
+{% if powerdns.config.recursor['snmp-agent'] is defined %}
+snmp-agent={{ powerdns.config.recursor['snmp-agent'] }}
+{% endif %}
+{% if powerdns.config.recursor['snmp-master-socket'] is defined %}
+snmp-master-socket={{ powerdns.config.recursor['snmp-master-socket'] }}
+{% endif %}
+{% if powerdns.config.recursor['soa-minimum-ttl'] is defined %}
+soa-minimum-ttl={{ powerdns.config.recursor['soa-minimum-ttl'] }}
+{% endif %}
+{% if powerdns.config.recursor['socket-dir'] is defined %}
+socket-dir={{ powerdns.config.recursor['socket-dir'] }}
+{% endif %}
+{% if powerdns.config.recursor['socket-group'] is defined %}
+socket-group={{ powerdns.config.recursor['socket-group'] }}
+{% endif %}
+{% if powerdns.config.recursor['socket-mode'] is defined %}
+socket-mode={{ powerdns.config.recursor['socket-mode'] }}
+{% endif %}
+{% if powerdns.config.recursor['socket-owner'] is defined %}
+socket-owner={{ powerdns.config.recursor['socket-owner'] }}
+{% endif %}
+{% if powerdns.config.recursor['spoof-nearmiss-max'] is defined %}
+spoof-nearmiss-max={{ powerdns.config.recursor['spoof-nearmiss-max'] }}
+{% endif %}
+{% if powerdns.config.recursor['stack-size'] is defined %}
+stack-size={{ powerdns.config.recursor['stack-size'] }}
+{% endif %}
+{% if powerdns.config.recursor['statistics-interval'] is defined %}
+statistics-interval={{ powerdns.config.recursor['statistics-interval'] }}
+{% endif %}
+{% if powerdns.config.recursor['stats-ringbuffer-entries'] is defined %}
+stats-ringbuffer-entries={{ powerdns.config.recursor['stats-ringbuffer-entries'] }}
+{% endif %}
+{% if powerdns.config.recursor['tcp-fast-open'] is defined %}
+tcp-fast-open={{ powerdns.config.recursor['tcp-fast-open'] }}
+{% endif %}
+{% if powerdns.config.recursor['threads'] is defined %}
+threads={{ powerdns.config.recursor['threads'] }}
+{% endif %}
+{% if powerdns.config.recursor['trace'] is defined %}
+trace={{ powerdns.config.recursor['trace'] }}
+{% endif %}
+{% if powerdns.config.recursor['udp-truncation-threshold'] is defined %}
+udp-truncation-threshold={{ powerdns.config.recursor['udp-truncation-threshold'] }}
+{% endif %}
+{% if powerdns.config.recursor['use-incoming-edns-subnet'] is defined %}
+use-incoming-edns-subnet={{ powerdns.config.recursor['use-incoming-edns-subnet'] }}
+{% endif %}
+{% if powerdns.config.recursor['version-string'] is defined %}
+version-string={{ powerdns.config.recursor['version-string'] }}
+{% endif %}
+{% if powerdns.config.recursor['webserver'] is defined %}
+webserver={{ powerdns.config.recursor['webserver'] }}
+{% endif %}
+{% if powerdns.config.recursor['webserver-address'] is defined %}
+webserver-address={{ powerdns.config.recursor['webserver-address'] }}
+{% endif %}
+{% if powerdns.config.recursor['webserver-allow-from'] is defined %}
+webserver-allow-from={{ powerdns.config.recursor['webserver-allow-from'] }}
+{% endif %}
+{% if powerdns.config.recursor['webserver-password'] is defined %}
+webserver-password={{ powerdns.config.recursor['webserver-password'] }}
+{% endif %}
+{% if powerdns.config.recursor['webserver-port'] is defined %}
+webserver-port={{ powerdns.config.recursor['webserver-port'] }}
+{% endif %}
+{% if powerdns.config.recursor['write-pid'] is defined %}
+write-pid={{ powerdns.config.recursor['write-pid'] }}
+{% endif %}

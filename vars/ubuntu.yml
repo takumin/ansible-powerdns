@@ -1,0 +1,34 @@
+---
+powerdns:
+  package:
+    backend:
+      gmysql:      'pdns-backend-mysql'
+    authoritative: 'pdns-server'
+    recursor:      'pdns-recursor'
+    dnsdist:       'dnsdist'
+  service:
+    authoritative: 'pdns.service'
+    recursor:      'pdns-recursor.service'
+    dnsdist:       'dnsdist.service'
+  root_owner:      'root'
+  root_group:      'root'
+  user_owner:
+    authoritative: 'pdns'
+    recursor:      'pdns'
+    dnsdist:       'pdns'
+  user_group:
+    authoritative: 'pdns'
+    recursor:      'pdns'
+    dnsdist:       'pdns'
+  config_dir:
+    authoritative: '/etc/powerdns'
+    recursor:      '/etc/powerdns'
+    dnsdist:       '/etc/dnsdist'
+  config_file:
+    authoritative: 'pdns.conf'
+    recursor:      'recursor.conf'
+    dnsdist:       'dnsdist.conf'
+  include_dir:
+    authoritative: '/etc/powerdns/pdns.d'
+    recursor:      '/etc/powerdns/recursor.d'
+    dnsdist:       '/etc/dnsdist/dnsdist.d'

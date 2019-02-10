@@ -1,0 +1,16 @@
+---
+powerdns:
+  package:         '{{ powerdns_vars.package }}'
+  service:         '{{ powerdns_vars.service }}'
+  root_owner:      '{{ powerdns_vars.root_owner }}'
+  root_group:      '{{ powerdns_vars.root_group }}'
+  user_owner:      '{{ powerdns_vars.user_owner }}'
+  user_group:      '{{ powerdns_vars.user_group }}'
+  config_dir:      '{{ powerdns_vars.config_dir }}'
+  config_file:     '{{ powerdns_vars.config_file }}'
+  include_dir:     '{{ powerdns_vars.include_dir }}'
+
+  active:
+    authoritative: False
+    recursor:      False
+    dnsdist:       False

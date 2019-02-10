@@ -1,0 +1,34 @@
+#
+# {{ ansible_managed }}
+#
+
+{% if powerdns.config.backend.gmysql['host'] is defined %}
+gmysql-host={{ powerdns.config.backend.gmysql['host'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['port'] is defined %}
+gmysql-port={{ powerdns.config.backend.gmysql['port'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['socket'] is defined %}
+gmysql-socket={{ powerdns.config.backend.gmysql['socket'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['dbname'] is defined %}
+gmysql-dbname={{ powerdns.config.backend.gmysql['dbname'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['user'] is defined %}
+gmysql-user={{ powerdns.config.backend.gmysql['user'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['group'] is defined %}
+gmysql-group={{ powerdns.config.backend.gmysql['group'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['password'] is defined %}
+gmysql-password={{ powerdns.config.backend.gmysql['password'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['dnssec'] is defined %}
+gmysql-dnssec={{ powerdns.config.backend.gmysql['dnssec'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['innodb-read-committed'] is defined %}
+gmysql-innodb-read-committed={{ powerdns.config.backend.gmysql['innodb-read-committed'] }}
+{% endif %}
+{% if powerdns.config.backend.gmysql['timeout'] is defined %}
+gmysql-timeout={{ powerdns.config.backend.gmysql['timeout'] }}
+{% endif %}

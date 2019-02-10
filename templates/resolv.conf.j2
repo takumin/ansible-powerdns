@@ -1,0 +1,26 @@
+#
+# {{ ansible_managed }}
+#
+{% if powerdns.resolv is defined %}
+{%   if powerdns.resolv.domain is defined and powerdns.resolv.domain != '' %}
+domain {{ powerdns.resolv.domain }}
+{%   endif %}
+{%   if powerdns.resolv.search is defined and powerdns.resolv.search != '' %}
+search {{ powerdns.resolv.search | join(' ') }}
+{%   endif %}
+{% elif ansible_dns is defined %}
+{%   if ansible_dns.domain is defined and ansible_dns.domain != '' %}
+domain {{ ansible_dns.domain }}
+{%   else %}
+domain {{ ansible_domain }}
+{%   endif %}
+{%   if ansible_dns.search is defined and ansible_dns.search != '' %}
+search {{ ansible_dns.search | join(' ') }}
+{%   else %}
+search {{ ansible_domain }}
+{%   endif %}
+{% else %}
+domain {{ ansible_domain }}
+search {{ ansible_domain }}
+{% endif %}
+nameserver 127.0.0.1

@@ -1,0 +1,20 @@
+#
+# {{ ansible_managed }}
+#
+
+{% if powerdns_repository is defined and powerdns_repository != '' %}
+# PowerDNS Mirror Repository
+deb [arch=amd64] {{ powerdns_repository }} {{ ansible_distribution_release }}-rec-41 main
+deb [arch=amd64] {{ powerdns_repository }} {{ ansible_distribution_release }}-dnsdist-13 main
+deb [arch=amd64] {{ powerdns_repository }} {{ ansible_distribution_release }}-auth-41 main
+
+# PowerDNS Official Repository
+#deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-rec-41 main
+#deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-dnsdist-13 main
+#deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-auth-41 main
+{% else %}
+# PowerDNS Official Repository
+deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-rec-41 main
+deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-dnsdist-13 main
+deb [arch=amd64] http://repo.powerdns.com/ubuntu {{ ansible_distribution_release }}-auth-41 main
+{% endif %}

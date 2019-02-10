@@ -1,0 +1,43 @@
+---
+- name: 'restarted service : powerdns : authoritative'
+  service:
+    name:  '{{ powerdns.service.authoritative }}'
+    state: 'restarted'
+  tags:
+  - dns
+  - powerdns
+
+- name: 'restarted service : powerdns : recursor'
+  service:
+    name:  '{{ powerdns.service.recursor }}'
+    state: 'restarted'
+  tags:
+  - dns
+  - powerdns
+
+- name: 'restarted service : powerdns : dnsdist'
+  service:
+    name:  '{{ powerdns.service.dnsdist }}'
+    state: 'restarted'
+  tags:
+  - dns
+  - powerdns
+
+- name: 'initialized database : powerdns : gmysql'
+  mysql_db:
+    state:          'import'
+    name:           '{{ powerdns.config.backend.gmysql["dbname"] }}'
+    login_user:     '{{ powerdns.config.backend.gmysql["user"] }}'
+    login_password: '{{ powerdns.config.backend.gmysql["password"] }}'
+    target:         '/usr/share/doc/pdns-backend-mysql/schema.mysql.sql'
+  tags:
+  - dns
+  - powerdns
+
+- name: 'initialized database : powerdns : gmysql : foreign keys'
+  command: "pdnsutil backend-cmd gmysql '{{ item }}'"
+  with_items:
+  - 'ALTER TABLE records ADD CONSTRAINT `records_domain_id_ibfk` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;'
+  - 'ALTER TABLE comments ADD CONSTRAINT `comments_domain_id_ibfk` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;'
+  - 'ALTER TABLE domainmetadata ADD CONSTRAINT `domainmetadata_domain_id_ibfk` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;'
+  - 'ALTER TABLE cryptokeys ADD CONSTRAINT `cryptokeys_domain_id_ibfk` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;'
