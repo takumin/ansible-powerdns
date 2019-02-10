@@ -3,7 +3,11 @@
 #
 
 {% if powerdns.config.recursor['allow-from'] is defined %}
+{%   if powerdns.config.recursor['allow-from'] is string and powerdns.config.recursor['allow-from'] != "" %}
 allow-from={{ powerdns.config.recursor['allow-from'] }}
+{%   elif powerdns.config.recursor['allow-from'] is sequence and powerdns.config.recursor['allow-from']|length > 0 %}
+allow-from={{ powerdns.config.recursor['allow-from']|join(", ") }}
+{%   endif %}
 {% endif %}
 {% if powerdns.config.recursor['allow-from-file'] is defined %}
 allow-from-file={{ powerdns.config.recursor['allow-from-file'] }}
